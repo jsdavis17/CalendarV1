@@ -1,11 +1,12 @@
 package dev.davisj.CalendarV1;
 
-import java.util.ArrayList;
+import java.time.LocalDate;
 
 public abstract class Exporter
 {
-	public Exporter()
-	{}
-	
-	public abstract void export(ArrayList<Entry> entries);
+	public Exporter(Profile profile)
+	{
+	}
+
+	public abstract void export(LocalDate start, LocalDate end, String filename);
 }

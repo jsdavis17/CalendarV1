@@ -1,0 +1,109 @@
+@startuml EntryHierarchy
+
+title Entry Hierarchy -- ChronoPlan
+
+skinparam classAttributeIconSize 0
+skinparam classFontStyle Bold
+skinparam classHeaderBackgroundColor #D0D8E4
+skinparam classBorderColor #000000
+skinparam classBackgroundColor #FFFFFF
+skinparam arrowColor #000000
+skinparam arrowThickness 1.5
+
+abstract class Entry {
+  - id : UUID
+  - title : String
+  - description : String
+  --
+  <<constructor>> Entry(title, desc : String)
+  + {abstract} display() : String
+  + {abstract} matches(field, val : String) : boolean
+  + {abstract} toRecord() : String
+  ..Getters..
+  + getId() : UUID
+  + getTitle() : String
+  + getDescription() : String
+  ..Setters..
+  + setTitle(title : String) : void
+  + setDescription(desc : String) : void
+}
+
+class Event {
+  - date : LocalDate
+  - startTime : LocalTime
+  - endTime : LocalTime
+  - busyStatus : boolean
+  --
+  <<constructor>> Event(title, desc : String, date : LocalDate,\n  start, end : LocalTime, busy : boolean)
+  + overlaps(other : Event) : boolean
+  + display() : String
+  + matches(field, val : String) : boolean
+  + toRecord() : String
+  ..Getters..
+  + getDate() : LocalDate
+  + getStartTime() : LocalTime
+  + getEndTime() : LocalTime
+  + isBusy() : boolean
+  ..Setters..
+  + setDate(date : LocalDate) : void
+  + setStartTime(time : LocalTime) : void
+  + setEndTime(time : LocalTime) : void
+  + setBusyStatus(busy : boolean) : void
+}
+
+class Task {
+  - duration : int
+  - deadline : LocalDate
+  - priority : int
+  - scheduledDate : LocalDate
+  - scheduledStart : LocalTime
+  --
+  <<constructor>> Task(title, desc : String, duration : int,\n  deadline : LocalDate, priority : int)
+  + isScheduled() : boolean
+  + setScheduledTime(date : LocalDate, start : LocalTime) : void
+  + display() : String
+  + matches(field, val : String) : boolean
+  + toRecord() : String
+  ..Getters..
+  + getDuration() : int
+  + getDeadline() : LocalDate
+  + getPriority() : int
+  + getScheduledDate() : LocalDate
+  + getScheduledStart() : LocalTime
+}
+
+class Flag {
+  - date : LocalDate
+  --
+  <<constructor>> Flag(title, desc : String, date : LocalDate)
+  + display() : String
+  + matches(field, val : String) : boolean
+  + toRecord() : String
+  ..Getters..
+  + getDate() : LocalDate
+  ..Setters..
+  + setDate(date : LocalDate) : void
+}
+
+class RecurringEvent {
+  - recurrencePattern : String
+  - intervalValue : int
+  - intervalUnit : String
+  --
+  <<constructor>> RecurringEvent(title, desc : String, date : LocalDate,\n  start, end : LocalTime, busy : boolean,\n  pattern : String, value : int, unit : String)
+  + generateOccurrences(start, end : LocalDate) : ArrayList<Event>
+  - advanceDate(date : LocalDate) : LocalDate
+  + display() : String
+  + toRecord() : String
+  ..Getters..
+  + getRecurrencePattern() : String
+  + getIntervalValue() : int
+  + getIntervalUnit() : String
+}
+
+Entry <|-- Event
+Entry <|-- Task
+Entry <|-- Flag
+Event <|-- RecurringEvent
+
+@enduml

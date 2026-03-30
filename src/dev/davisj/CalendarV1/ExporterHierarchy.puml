@@ -1,0 +1,46 @@
+@startuml ExporterHierarchy
+
+title Exporter Hierarchy -- ChronoPlan
+
+skinparam classAttributeIconSize 0
+skinparam classFontStyle Bold
+skinparam classHeaderBackgroundColor #D0D8E4
+skinparam classBorderColor #000000
+skinparam classBackgroundColor #FFFFFF
+skinparam arrowColor #000000
+skinparam arrowThickness 1.5
+skinparam class {
+  BackgroundColor<<stub>> #EFEFEF
+  BorderColor<<stub>> #AAAAAA
+  HeaderBackgroundColor<<stub>> #CCCCCC
+}
+
+abstract class Exporter <<stub>> {
+  --
+  <<constructor>> Exporter(profile : Profile)
+  + {abstract} export(start, end : LocalDate,\n  filename : String) : void
+}
+
+class JSONExporter <<stub>> {
+  --
+  <<constructor>> JSONExporter(profile : Profile)
+  + export(start, end : LocalDate, filename : String) : void
+}
+
+class CSVExporter <<stub>> {
+  --
+  <<constructor>> CSVExporter(profile : Profile)
+  + export(start, end : LocalDate, filename : String) : void
+}
+
+class ICSExporter <<stub>> {
+  --
+  <<constructor>> ICSExporter(profile : Profile)
+  + export(start, end : LocalDate, filename : String) : void
+}
+
+Exporter <|-- JSONExporter
+Exporter <|-- CSVExporter
+Exporter <|-- ICSExporter
+
+@enduml
