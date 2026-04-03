@@ -1,0 +1,72 @@
+@startuml SchedulerHierarchy
+
+title Scheduler Hierarchy -- ChronoPlan
+
+skinparam classAttributeIconSize 0
+skinparam classFontStyle Bold
+skinparam classHeaderBackgroundColor #D0D8E4
+skinparam classBorderColor #000000
+skinparam classBackgroundColor #FFFFFF
+skinparam arrowColor #000000
+skinparam arrowThickness 1.5
+skinparam class {
+  BackgroundColor<<stub>> #EFEFEF
+  BorderColor<<stub>> #AAAAAA
+  HeaderBackgroundColor<<stub>> #CCCCCC
+}
+
+class Scheduler {
+  - profile : Profile
+  --
+  <<constructor>> Scheduler(profile : Profile)
+  + detectConflicts(event : Event) : ArrayList<Event>
+}
+
+package "Ordering Policies  [stub — US9]" {
+
+  abstract class SchedulingPolicy <<stub>> {
+    --
+    + {abstract} sortTasks(tasks : ArrayList<Task>) : ArrayList<Task>
+  }
+
+  class EarliestDeadlinePolicy <<stub>> {
+    --
+    + sortTasks(tasks : ArrayList<Task>) : ArrayList<Task>
+  }
+
+  class PriorityFirstPolicy <<stub>> {
+    --
+    + sortTasks(tasks : ArrayList<Task>) : ArrayList<Task>
+  }
+
+  SchedulingPolicy <|-- EarliestDeadlinePolicy
+  SchedulingPolicy <|-- PriorityFirstPolicy
+
+}
+
+package "Placement Policies  [stub — US9]" {
+
+  abstract class PlacementPolicy <<stub>> {
+    --
+    + {abstract} selectSlot(task : Task,\n  candidates : ArrayList<LocalDateTime[]>) : LocalDateTime[]
+  }
+
+  class DeepWorkPlacement <<stub>> {
+    --
+    + selectSlot(task : Task,\n  candidates : ArrayList<LocalDateTime[]>) : LocalDateTime[]
+  }
+
+  class SpreadOutPlacement <<stub>> {
+    --
+    + selectSlot(task : Task,\n  candidates : ArrayList<LocalDateTime[]>) : LocalDateTime[]
+  }
+
+  PlacementPolicy <|-- DeepWorkPlacement
+  PlacementPolicy <|-- SpreadOutPlacement
+
+}
+
+Scheduler ..> SchedulingPolicy : will use >
+Scheduler ..> PlacementPolicy  : will use >
+
+@enduml

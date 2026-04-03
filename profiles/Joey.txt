@@ -1,6 +1,10 @@
-SETTINGS|viewMode=3day|focusDate=2026-03-30
-EVENT|id=f3a0226e-028e-452a-91b0-3a8cd1c38c99|title=Chapter|description=COB+119|date=2026-03-30|start=19:00|end=21:00|busy=true
-EVENT|id=9151d473-cc15-4bfb-9df0-d9ac7be0b6b6|title=HF+310|description=COAS+203|date=2026-03-30|start=08:00|end=08:50|busy=true
-EVENT|id=38a28711-e02d-4200-bb69-3dbdfcfe94b4|title=CEC+220|description=|date=2026-03-30|start=10:00|end=10:50|busy=true
-EVENT|id=c2416baf-c27c-4fc6-993a-8e17bca63c29|title=CS+225|description=|date=2026-03-30|start=12:00|end=12:50|busy=true
-RECURRING|id=de1c318a-209e-4e16-b458-61a3b6c8daab|title=CS+222|description=|date=2026-03-31|start=15:45|end=17:00|busy=true|pattern=WEEKLY|value=1|unit=WEEKS
+SETTINGS|viewMode=month|focusDate=2026-04-03
+RECURRING|id=92af9a15-430f-43d2-8c58-328e36902fe1|title=HF+310|description=COAS+203|date=2026-04-03|start=08:00|end=08:50|busy=true|pattern=WEEKLY|value=1|unit=WEEKS
+RECURRING|id=5bd2a769-f5b9-4317-a1ce-b1f637f9f392|title=CEC+220|description=|date=2026-04-03|start=10:00|end=10:50|busy=true|pattern=WEEKLY|value=1|unit=WEEKS
+RECURRING|id=77c97688-3643-42a1-90f7-46fb2c2ede60|title=CS+225|description=COAS+203|date=2026-04-03|start=12:00|end=12:50|busy=true|pattern=WEEKLY|value=1|unit=WEEKS
+RECURRING|id=625f41c3-ca23-46a4-b523-5ac34c403f5b|title=HF+310|description=COAS+203|date=2026-03-30|start=08:00|end=08:50|busy=true|pattern=WEEKLY|value=1|unit=WEEKS
+RECURRING|id=01f1adfd-9630-47cb-ad32-43c9eddb3508|title=HF+310|description=COAS+203|date=2026-04-01|start=08:00|end=08:50|busy=true|pattern=WEEKLY|value=1|unit=WEEKS
+RECURRING|id=73c8c21a-305b-4b1c-ba11-d40091342422|title=CEC+220|description=|date=2026-03-30|start=10:00|end=10:50|busy=true|pattern=WEEKLY|value=1|unit=WEEKS
+RECURRING|id=28a6917a-cd23-42b4-b7f7-fc0c14fc2d12|title=CEC+220|description=|date=2026-04-01|start=10:00|end=10:50|busy=true|pattern=WEEKLY|value=1|unit=WEEKS
+RECURRING|id=dce4f2e3-dc98-4cea-95a3-fcb68af9c385|title=CS+225|description=COAS+203|date=2026-03-30|start=12:00|end=12:50|busy=true|pattern=WEEKLY|value=1|unit=WEEKS
+RECURRING|id=eaf4de6e-c6fb-4b4e-b1c5-92c931bba20b|title=CS+225|description=COAS+203|date=2026-04-01|start=12:00|end=12:50|busy=true|pattern=WEEKLY|value=1|unit=WEEKS

@@ -1,0 +1,102 @@
+@startuml ChronoPlan
+
+skinparam classAttributeIconSize 0
+skinparam classFontStyle Bold
+skinparam classHeaderBackgroundColor #D0D8E4
+skinparam classBorderColor #000000
+skinparam classBackgroundColor #FFFFFF
+skinparam arrowColor #000000
+skinparam arrowThickness 1.2
+skinparam packageBorderColor #555555
+skinparam packageBackgroundColor #F7F9FC
+skinparam class {
+  BackgroundColor<<stub>> #EFEFEF
+  BorderColor<<stub>> #AAAAAA
+  HeaderBackgroundColor<<stub>> #CCCCCC
+}
+
+class Profile {
+  - profileName : String
+  - entries : ArrayList<Entry>
+  - focusDate : LocalDate
+  - viewMode : String
+  --
+  <<constructor>> Profile(name : String)
+  + addEntry(entry : Entry) : void
+  + removeEntry(entry : Entry) : void
+  + getEntriesInRange(start, end : LocalDate) : ArrayList<Entry>
+  + getSettings() : String[]
+  + setSettings(settings : String[]) : void
+  + getProfileName() : String
+  + getEntries() : ArrayList<Entry>
+  + getFocusDate() : LocalDate
+  + getViewMode() : String
+  + setFocusDate(date : LocalDate) : void
+  + setViewMode(mode : String) : void
+}
+
+class ProfileManager {
+  - {static} INDEX_FILE : String
+  - profileDirectory : String
+  --
+  <<constructor>> ProfileManager()
+  + listProfiles() : ArrayList<String>
+  + profileExists(name : String) : boolean
+  + createProfile(name : String) : Profile
+  + saveProfile(profile : Profile) : void
+  + loadProfile(name : String) : Profile
+}
+
+class CalendarView {
+  - profile : Profile
+  --
+  <<constructor>> CalendarView(profile : Profile)
+  + display() : void
+  + displayDay(date : LocalDate) : void
+  + displayThreeDay(date : LocalDate) : void
+  + displayWeek(date : LocalDate) : void
+  + displayMonth(date : LocalDate) : void
+  + formatEntry(entry : Entry) : String
+  + showConflictMarker(events : ArrayList<Event>) : void
+}
+
+class ChronoPlan {
+  - profile : Profile
+  - profileManager : ProfileManager
+  - view : CalendarView
+  - scheduler : Scheduler
+  --
+  + {static} main(args : String[]) : void
+  <<constructor>> ChronoPlan()
+  + run() : void
+  + handleMenu() : void
+  + handleEntryCreation() : void
+  + getIntInput(prompt : String) : int
+  + getStringInput(prompt : String) : String
+  + getDateInput(prompt : String) : LocalDate
+  + getTimeInput(prompt : String) : LocalTime
+}
+
+package "Entry Hierarchy" {
+  abstract class Entry {}
+}
+
+package "Scheduler Hierarchy  [stub]" {
+  class Scheduler {}
+}
+
+package "Exporter Hierarchy  [stub]" {
+  abstract class Exporter <<stub>> {}
+}
+
+Profile        "1" o-- "0..*" Entry        : contains >
+ProfileManager  ..>  Profile               : creates / loads >
+ChronoPlan      -->  Profile               : uses >
+ChronoPlan      -->  ProfileManager        : uses >
+ChronoPlan      -->  CalendarView          : uses >
+ChronoPlan      -->  Scheduler             : uses >
+ChronoPlan      -->  Exporter              : uses >
+CalendarView    -->  Profile               : uses >
+Scheduler       -->  Profile               : uses >
+
+@enduml
