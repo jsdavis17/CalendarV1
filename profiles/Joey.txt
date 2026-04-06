@@ -1,4 +1,4 @@
-SETTINGS|viewMode=month|focusDate=2026-04-03
+SETTINGS|viewMode=week|focusDate=2026-04-03
 RECURRING|id=92af9a15-430f-43d2-8c58-328e36902fe1|title=HF+310|description=COAS+203|date=2026-04-03|start=08:00|end=08:50|busy=true|pattern=WEEKLY|value=1|unit=WEEKS
 RECURRING|id=5bd2a769-f5b9-4317-a1ce-b1f637f9f392|title=CEC+220|description=|date=2026-04-03|start=10:00|end=10:50|busy=true|pattern=WEEKLY|value=1|unit=WEEKS
 RECURRING|id=77c97688-3643-42a1-90f7-46fb2c2ede60|title=CS+225|description=COAS+203|date=2026-04-03|start=12:00|end=12:50|busy=true|pattern=WEEKLY|value=1|unit=WEEKS

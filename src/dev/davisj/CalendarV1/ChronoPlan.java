@@ -40,7 +40,8 @@ public class ChronoPlan
 			profile = profileManager.createProfile(name);
 			System.out.println("Profile \"" + name + "\" created.");
 			handleNewProfileSetup();
-		} else
+		}
+		else
 		{
 			System.out.println("\nExisting profiles:");
 			for (int i = 0; i < profiles.size(); i++)
@@ -52,7 +53,8 @@ public class ChronoPlan
 			{
 				profile = profileManager.loadProfile(profiles.get(choice - 1));
 				System.out.println("Loaded profile: " + profile.getProfileName());
-			} else
+			}
+			else
 			{
 				String name = getStringInput("New profile name: ");
 				profile = profileManager.createProfile(name);
@@ -92,7 +94,8 @@ public class ChronoPlan
 			System.out.println(" 1. Change Focus Date");
 			System.out.println(" 2. Create Entry");
 			System.out.println(" 3. Change View  [" + profile.getViewMode() + "]");
-			System.out.println(" 4. Quit");
+			System.out.println(" 4. Search");
+			System.out.println(" 5. Quit");
 			System.out.println("─────────────────────────────────────────");
 
 			int choice = getIntInput("Choice: ");
@@ -108,6 +111,9 @@ public class ChronoPlan
 				handleChangeView();
 				break;
 			case 4:
+				handleSearch();
+				break;
+			case 5:
 				autosave();
 				System.out.println("Profile saved. Goodbye!");
 				running = false;
@@ -159,7 +165,8 @@ public class ChronoPlan
 		{
 			profile.setViewMode(mode);
 			autosave();
-		} else
+		}
+		else
 		{
 			System.out.println("Invalid mode — unchanged.");
 		}
@@ -317,6 +324,309 @@ public class ChronoPlan
 		System.out.println("  Recurring event added.");
 	}
 
+	private void handleSearch()
+	{
+		System.out.println("\n── Search ──");
+		System.out.println("  1. Title");
+		System.out.println("  2. Date         (YYYY-MM-DD)");
+		System.out.println("  3. Type         (event / task / flag / recurring)");
+		System.out.println("  4. Deadline     (YYYY-MM-DD, tasks only)");
+		System.out.println("  0. Cancel");
+
+		int choice = getIntInput("  Search by: ");
+		String field, val;
+		switch (choice)
+		{
+		case 1:
+			field = "title";
+			val = getStringInput("  Title contains: ");
+			break;
+		case 2:
+			field = "date";
+			val = getDateInput("  Date (YYYY-MM-DD): ").toString();
+			break;
+		case 3:
+			field = "type";
+			val = getStringInput("  Type: ");
+			break;
+		case 4:
+			field = "deadline";
+			val = getDateInput("  Deadline (YYYY-MM-DD): ").toString();
+			break;
+		default:
+			return;
+		}
+
+		ArrayList<Entry> results = profile.searchEntries(field, val);
+		if (results.isEmpty())
+		{
+			System.out.println("  No entries found.");
+			return;
+		}
+
+		System.out.println("\n  Results (" + results.size() + "):");
+		for (int i = 0; i < results.size(); i++)
+		{
+			String summary = results.get(i).display().lines().findFirst().orElse(results.get(i).getTitle());
+			System.out.println("  " + (i + 1) + ". " + summary);
+		}
+
+		if (results.size() == 1)
+		{
+			handleViewEdit(results.get(0));
+			return;
+		}
+
+		int sel = getIntInput("\n  Select entry (0 to cancel): ");
+		if (sel >= 1 && sel <= results.size())
+			handleViewEdit(results.get(sel - 1));
+	}
+
+	private void handleViewEdit(Entry entry)
+	{
+		System.out.println("\n" + entry.display());
+		System.out.println("  1. Edit");
+		System.out.println("  2. Delete");
+		System.out.println("  0. Back");
+
+		int choice = getIntInput("  Choice: ");
+		switch (choice)
+		{
+		case 1:
+			editEntry(entry);
+			break;
+		case 2:
+			deleteEntry(entry);
+			break;
+		}
+	}
+
+	private void editEntry(Entry entry)
+	{
+		if (entry instanceof RecurringEvent)
+			editRecurringEvent((RecurringEvent) entry);
+		else if (entry instanceof Event)
+			editEvent((Event) entry);
+		else if (entry instanceof Task)
+			editTask((Task) entry);
+		else if (entry instanceof Flag)
+			editFlag((Flag) entry);
+	}
+
+	private void editEvent(Event ev)
+	{
+		System.out.println("\n── Edit Event ── (press Enter to keep current value)");
+
+		String title = tryString("  Title [" + ev.getTitle() + "]: ");
+		String desc = tryString("  Description [" + ev.getDescription() + "]: ");
+		LocalDate date = tryDate("  Date [" + ev.getDate() + "]: ");
+		LocalTime start = tryTime("  Start time [" + ev.getStartTime() + "]: ");
+		LocalTime end = tryTime("  End time [" + ev.getEndTime() + "]: ");
+
+		System.out.print("  Busy [" + (ev.isBusy() ? "Busy" : "Free") + "]  1=Busy  2=Free  (Enter to keep): ");
+		String busyIn = scanner.nextLine().trim();
+
+		LocalTime newStart = start != null ? start : ev.getStartTime();
+		LocalTime newEnd = end != null ? end : ev.getEndTime();
+		if (!newEnd.isAfter(newStart))
+		{
+			System.out.println("  End time must be after start — edit cancelled.");
+			return;
+		}
+
+		if (title != null)
+			ev.setTitle(title);
+		if (desc != null)
+			ev.setDescription(desc);
+		if (date != null)
+			ev.setDate(date);
+		ev.setStartTime(newStart);
+		ev.setEndTime(newEnd);
+		if (busyIn.equals("1"))
+			ev.setBusyStatus(true);
+		else if (busyIn.equals("2"))
+			ev.setBusyStatus(false);
+
+		autosave();
+		System.out.println("  Event updated.");
+	}
+
+	private void editRecurringEvent(RecurringEvent re)
+	{
+		System.out.println("\n── Edit Recurring Event ── (press Enter to keep current value)");
+
+		String title = tryString("  Title [" + re.getTitle() + "]: ");
+		String desc = tryString("  Description [" + re.getDescription() + "]: ");
+		LocalDate date = tryDate("  Start date [" + re.getDate() + "]: ");
+		LocalTime start = tryTime("  Start time [" + re.getStartTime() + "]: ");
+		LocalTime end = tryTime("  End time [" + re.getEndTime() + "]: ");
+
+		System.out.print("  Busy [" + (re.isBusy() ? "Busy" : "Free") + "]  1=Busy  2=Free  (Enter to keep): ");
+		String busyIn = scanner.nextLine().trim();
+
+		String pattern = tryString("  Pattern [" + re.getRecurrencePattern() + "]: ");
+		int value = tryInt("  Interval value [" + re.getIntervalValue() + "]: ");
+		String unit = tryString("  Interval unit [" + re.getIntervalUnit() + "]: ");
+
+		LocalTime newStart = start != null ? start : re.getStartTime();
+		LocalTime newEnd = end != null ? end : re.getEndTime();
+		if (!newEnd.isAfter(newStart))
+		{
+			System.out.println("  End time must be after start — edit cancelled.");
+			return;
+		}
+
+		if (title != null)
+			re.setTitle(title);
+		if (desc != null)
+			re.setDescription(desc);
+		if (date != null)
+			re.setDate(date);
+		re.setStartTime(newStart);
+		re.setEndTime(newEnd);
+		if (busyIn.equals("1"))
+			re.setBusyStatus(true);
+		else if (busyIn.equals("2"))
+			re.setBusyStatus(false);
+		if (pattern != null)
+			re.setRecurrencePattern(pattern);
+		if (value != -1)
+			re.setIntervalValue(value);
+		if (unit != null)
+			re.setIntervalUnit(unit.toUpperCase());
+
+		autosave();
+		System.out.println("  Recurring event updated.");
+	}
+
+	private void editTask(Task t)
+	{
+		System.out.println("\n── Edit Task ── (press Enter to keep current value)");
+
+		String title = tryString("  Title [" + t.getTitle() + "]: ");
+		String desc = tryString("  Description [" + t.getDescription() + "]: ");
+		int duration = tryInt("  Duration minutes [" + t.getDuration() + "]: ");
+		LocalDate deadline = tryDate("  Deadline [" + t.getDeadline() + "]: ");
+		int priority = tryInt("  Priority 1-3 [" + t.getPriority() + "]: ");
+
+		if (title != null)
+			t.setTitle(title);
+		if (desc != null)
+			t.setDescription(desc);
+		if (duration != -1)
+			t.setDuration(duration);
+		if (deadline != null)
+			t.setDeadline(deadline);
+		if (priority != -1)
+		{
+			if (priority >= 1 && priority <= 3)
+				t.setPriority(priority);
+			else
+				System.out.println("  Priority must be 1-3 — unchanged.");
+		}
+
+		autosave();
+		System.out.println("  Task updated.");
+	}
+
+	private void editFlag(Flag f)
+	{
+		System.out.println("\n── Edit Flag ── (press Enter to keep current value)");
+
+		String title = tryString("  Title [" + f.getTitle() + "]: ");
+		String desc = tryString("  Description [" + f.getDescription() + "]: ");
+		LocalDate date = tryDate("  Date [" + f.getDate() + "]: ");
+
+		if (title != null)
+			f.setTitle(title);
+		if (desc != null)
+			f.setDescription(desc);
+		if (date != null)
+			f.setDate(date);
+
+		autosave();
+		System.out.println("  Flag updated.");
+	}
+
+	private void deleteEntry(Entry entry)
+	{
+		System.out.print("  Delete \"" + entry.getTitle() + "\"? (y/N): ");
+		if (scanner.nextLine().trim().equalsIgnoreCase("y"))
+		{
+			profile.removeEntry(entry);
+			autosave();
+			System.out.println("  Entry deleted.");
+		}
+		else
+		{
+			System.out.println("  Cancelled.");
+		}
+	}
+
+	private String tryString(String prompt)
+	{
+		System.out.print(prompt);
+		String s = scanner.nextLine();
+		return s.isEmpty() ? null : s;
+	}
+
+	private LocalDate tryDate(String prompt)
+	{
+		while (true)
+		{
+			System.out.print(prompt);
+			String s = scanner.nextLine().trim();
+			if (s.isEmpty())
+				return null;
+			try
+			{
+				return LocalDate.parse(s);
+			}
+			catch (DateTimeParseException e)
+			{
+				System.out.println("  Use format YYYY-MM-DD.");
+			}
+		}
+	}
+
+	private LocalTime tryTime(String prompt)
+	{
+		while (true)
+		{
+			System.out.print(prompt);
+			String s = scanner.nextLine().trim();
+			if (s.isEmpty())
+				return null;
+			try
+			{
+				return LocalTime.parse(s);
+			}
+			catch (DateTimeParseException e)
+			{
+				System.out.println("  Use format HH:MM.");
+			}
+		}
+	}
+
+	private int tryInt(String prompt)
+	{
+		while (true)
+		{
+			System.out.print(prompt);
+			String s = scanner.nextLine().trim();
+			if (s.isEmpty())
+				return -1;
+			try
+			{
+				return Integer.parseInt(s);
+			}
+			catch (NumberFormatException e)
+			{
+				System.out.println("  Enter a whole number.");
+			}
+		}
+	}
+
 	private int getPriorityInput(String prompt)
 	{
 		while (true)
@@ -336,7 +646,8 @@ public class ChronoPlan
 			try
 			{
 				return Integer.parseInt(scanner.nextLine().trim());
-			} catch (NumberFormatException e)
+			}
+			catch (NumberFormatException e)
 			{
 				System.out.println("  Enter a whole number.");
 			}
@@ -357,7 +668,8 @@ public class ChronoPlan
 			try
 			{
 				return LocalDate.parse(scanner.nextLine().trim());
-			} catch (DateTimeParseException e)
+			}
+			catch (DateTimeParseException e)
 			{
 				System.out.println("  Use format YYYY-MM-DD.");
 			}
@@ -372,7 +684,8 @@ public class ChronoPlan
 			try
 			{
 				return LocalTime.parse(scanner.nextLine().trim());
-			} catch (DateTimeParseException e)
+			}
+			catch (DateTimeParseException e)
 			{
 				System.out.println("  Use format HH:MM.");
 			}

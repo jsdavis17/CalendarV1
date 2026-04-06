@@ -106,4 +106,20 @@ public class RecurringEvent extends Event
 	{
 		return intervalUnit;
 	}
+
+	// Setters
+	public void setRecurrencePattern(String pattern)
+	{
+		this.recurrencePattern = pattern;
+	}
+
+	public void setIntervalValue(int value)
+	{
+		this.intervalValue = value;
+	}
+
+	public void setIntervalUnit(String unit)
+	{
+		this.intervalUnit = unit;
+	}
 }

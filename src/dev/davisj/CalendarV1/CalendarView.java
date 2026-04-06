@@ -139,7 +139,8 @@ public class CalendarView
 				String suffix = overlapCount > 0 ? "  +" + overlapCount + " ovlp" : "";
 				System.out.println("    " + formatEntry(ev) + suffix);
 			}
-		} else
+		}
+		else
 		{
 			Set<Integer> conflictIdx = new HashSet<>();
 			for (int i = 0; i < timedEvents.size(); i++)

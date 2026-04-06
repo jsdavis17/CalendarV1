@@ -57,6 +57,15 @@ public class Profile
 		return result;
 	}
 
+	public ArrayList<Entry> searchEntries(String field, String val)
+	{
+		ArrayList<Entry> results = new ArrayList<>();
+		for (Entry e : entries)
+			if (e.matches(field, val))
+				results.add(e);
+		return results;
+	}
+
 	public String[] getSettings()
 	{
 		return new String[]
