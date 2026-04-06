@@ -1,6 +1,7 @@
 package dev.davisj.CalendarV1;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 
 public class Profile
@@ -9,6 +10,8 @@ public class Profile
 	private ArrayList<Entry> entries;
 	private LocalDate focusDate;
 	private String viewMode;
+	private LocalTime workStart;
+	private LocalTime workEnd;
 
 	public Profile(String name)
 	{
@@ -16,6 +19,8 @@ public class Profile
 		this.entries = new ArrayList<>();
 		this.focusDate = LocalDate.now();
 		this.viewMode = "week";
+		this.workStart = LocalTime.of(8, 0);
+		this.workEnd = LocalTime.of(20, 0);
 	}
 
 	public void addEntry(Entry entry)
@@ -36,18 +41,21 @@ public class Profile
 			if (e instanceof RecurringEvent)
 			{
 				result.addAll(((RecurringEvent) e).generateOccurrences(start, end));
-			} else if (e instanceof Event)
+			}
+			else if (e instanceof Event)
 			{
 				LocalDate d = ((Event) e).getDate();
 				if (!d.isBefore(start) && !d.isAfter(end))
 					result.add(e);
-			} else if (e instanceof Task)
+			}
+			else if (e instanceof Task)
 			{
 				Task t = (Task) e;
 				LocalDate ref = t.isScheduled() ? t.getScheduledDate() : t.getDeadline();
 				if (!ref.isBefore(start) && !ref.isAfter(end))
 					result.add(e);
-			} else if (e instanceof Flag)
+			}
+			else if (e instanceof Flag)
 			{
 				LocalDate d = ((Flag) e).getDate();
 				if (!d.isBefore(start) && !d.isAfter(end))
@@ -68,8 +76,7 @@ public class Profile
 
 	public String[] getSettings()
 	{
-		return new String[]
-		{ viewMode, focusDate.toString() };
+		return new String[] {viewMode, focusDate.toString(), workStart.toString(), workEnd.toString()};
 	}
 
 	public void setSettings(String[] settings)
@@ -78,6 +85,11 @@ public class Profile
 		{
 			viewMode = settings[0];
 			focusDate = LocalDate.parse(settings[1]);
+		}
+		if (settings.length >= 4)
+		{
+			workStart = LocalTime.parse(settings[2]);
+			workEnd = LocalTime.parse(settings[3]);
 		}
 	}
 
@@ -111,5 +123,25 @@ public class Profile
 	public void setViewMode(String mode)
 	{
 		this.viewMode = mode;
+	}
+
+	public LocalTime getWorkStart()
+	{
+		return workStart;
+	}
+
+	public LocalTime getWorkEnd()
+	{
+		return workEnd;
+	}
+
+	public void setWorkStart(LocalTime workStart)
+	{
+		this.workStart = workStart;
+	}
+
+	public void setWorkEnd(LocalTime workEnd)
+	{
+		this.workEnd = workEnd;
 	}
 }
