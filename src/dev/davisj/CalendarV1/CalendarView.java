@@ -171,13 +171,10 @@ public class CalendarView
 	private String formatBlock(String content)
 	{
 		int width = 40;
-		String line = content.length() > width
-				? content.substring(0, width - 1) + "\u2026"
+		String line = content.length() > width ? content.substring(0, width - 1) + "\u2026"
 				: String.format("%-" + width + "s", content);
 		String bar = "\u2500".repeat(width + 2);
-		return "    \u250c" + bar + "\u2510\n"
-				+ "    \u2502 " + line + " \u2502\n"
-				+ "    \u2514" + bar + "\u2518\n";
+		return "    \u250c" + bar + "\u2510\n" + "    \u2502 " + line + " \u2502\n" + "    \u2514" + bar + "\u2518\n";
 	}
 
 	public String formatEntry(Entry entry)

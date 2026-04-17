@@ -108,7 +108,6 @@ public class Scheduler
 		int minBreak = profile.getMinBreakMinutes();
 		LocalTime workEnd = profile.getWorkEnd();
 
-		// Block the configured no-work period on every day
 		LocalTime noWorkStart = profile.getNoWorkStart();
 		LocalTime noWorkEnd = profile.getNoWorkEnd();
 		if (noWorkStart != null && noWorkEnd != null && noWorkEnd.isAfter(noWorkStart))
