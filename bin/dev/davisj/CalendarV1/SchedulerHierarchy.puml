@@ -20,21 +20,36 @@ class Scheduler {
   --
   <<constructor>> Scheduler(profile : Profile)
   + detectConflicts(event : Event) : ArrayList<Event>
+  + scheduleTasks(from : LocalDate,\n  sortPolicy : SchedulingPolicy,\n  placementPolicy : PlacementPolicy) : SchedulingResult
+  - findCandidateSlots(task : Task, from : LocalDate,\n  newlyScheduled : ArrayList<Task>) : ArrayList<LocalDateTime[]>
+  - getOccupiedIntervals(date : LocalDate,\n  newlyScheduled : ArrayList<Task>) : ArrayList<LocalTime[]>
+  - subtractOccupied(workStart, workEnd : LocalTime,\n  occupied : ArrayList<LocalTime[]>) : ArrayList<LocalTime[]>
 }
 
-package "Ordering Policies  [stub — US9]" {
+class SchedulingResult {
+  - scheduled : ArrayList<Task>
+  - unplaceable : ArrayList<Task>
+  --
+  <<constructor>> SchedulingResult(scheduled : ArrayList<Task>,\n  unplaceable : ArrayList<Task>)
+  + getScheduled() : ArrayList<Task>
+  + getUnplaceable() : ArrayList<Task>
+  + isComplete() : boolean
+  + totalProcessed() : int
+}
 
-  abstract class SchedulingPolicy <<stub>> {
+package "Ordering Policies" {
+
+  abstract class SchedulingPolicy {
     --
     + {abstract} sortTasks(tasks : ArrayList<Task>) : ArrayList<Task>
   }
 
-  class EarliestDeadlinePolicy <<stub>> {
+  class EarliestDeadlinePolicy {
     --
     + sortTasks(tasks : ArrayList<Task>) : ArrayList<Task>
   }
 
-  class PriorityFirstPolicy <<stub>> {
+  class PriorityFirstPolicy {
     --
     + sortTasks(tasks : ArrayList<Task>) : ArrayList<Task>
   }
@@ -44,19 +59,19 @@ package "Ordering Policies  [stub — US9]" {
 
 }
 
-package "Placement Policies  [stub — US9]" {
+package "Placement Policies" {
 
-  abstract class PlacementPolicy <<stub>> {
+  abstract class PlacementPolicy {
     --
     + {abstract} selectSlot(task : Task,\n  candidates : ArrayList<LocalDateTime[]>) : LocalDateTime[]
   }
 
-  class DeepWorkPlacement <<stub>> {
+  class DeepWorkPlacement {
     --
     + selectSlot(task : Task,\n  candidates : ArrayList<LocalDateTime[]>) : LocalDateTime[]
   }
 
-  class SpreadOutPlacement <<stub>> {
+  class SpreadOutPlacement {
     --
     + selectSlot(task : Task,\n  candidates : ArrayList<LocalDateTime[]>) : LocalDateTime[]
   }
@@ -66,7 +81,8 @@ package "Placement Policies  [stub — US9]" {
 
 }
 
-Scheduler ..> SchedulingPolicy : will use >
-Scheduler ..> PlacementPolicy  : will use >
+Scheduler  -->  SchedulingPolicy  : uses >
+Scheduler  -->  PlacementPolicy   : uses >
+Scheduler "1" --> "1" SchedulingResult : creates >
 
 @enduml

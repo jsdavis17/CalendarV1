@@ -9,34 +9,43 @@ skinparam classBorderColor #000000
 skinparam classBackgroundColor #FFFFFF
 skinparam arrowColor #000000
 skinparam arrowThickness 1.5
-skinparam class {
-  BackgroundColor<<stub>> #EFEFEF
-  BorderColor<<stub>> #AAAAAA
-  HeaderBackgroundColor<<stub>> #CCCCCC
-}
 
-abstract class Exporter <<stub>> {
+abstract class Exporter {
+  # profile : Profile
   --
   <<constructor>> Exporter(profile : Profile)
-  + {abstract} export(start, end : LocalDate,\n  filename : String) : void
+  + {abstract} export(start, end : LocalDate,\n  filename : String) : String
 }
 
-class JSONExporter <<stub>> {
+class JSONExporter {
   --
   <<constructor>> JSONExporter(profile : Profile)
-  + export(start, end : LocalDate, filename : String) : void
+  + export(start, end : LocalDate, filename : String) : String
+  - toJson(entry : Entry) : String
+  - buildEventJson(sb : StringBuilder, ev : Event) : void
+  - buildTaskJson(sb : StringBuilder, t : Task) : void
+  - buildFlagJson(sb : StringBuilder, f : Flag) : void
 }
 
-class CSVExporter <<stub>> {
+class CSVExporter {
+  - HEADER : String
   --
   <<constructor>> CSVExporter(profile : Profile)
-  + export(start, end : LocalDate, filename : String) : void
+  + export(start, end : LocalDate, filename : String) : String
+  - toCsv(entry : Entry) : String
+  - buildEventRow(ev : Event) : String
+  - buildTaskRow(t : Task) : String
+  - buildFlagRow(f : Flag) : String
 }
 
-class ICSExporter <<stub>> {
+class ICSExporter {
   --
   <<constructor>> ICSExporter(profile : Profile)
-  + export(start, end : LocalDate, filename : String) : void
+  + export(start, end : LocalDate, filename : String) : String
+  - buildEntry(entry : Entry) : String
+  - buildEvent(ev : Event) : String
+  - buildFlag(f : Flag) : String
+  - buildTodo(t : Task) : String
 }
 
 Exporter <|-- JSONExporter

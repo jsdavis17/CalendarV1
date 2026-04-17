@@ -70,6 +70,10 @@ class Task {
   + getPriority() : int
   + getScheduledDate() : LocalDate
   + getScheduledStart() : LocalTime
+  ..Setters..
+  + setDuration(duration : int) : void
+  + setDeadline(deadline : LocalDate) : void
+  + setPriority(priority : int) : void
 }
 
 class Flag {
@@ -94,11 +98,16 @@ class RecurringEvent {
   + generateOccurrences(start, end : LocalDate) : ArrayList<Event>
   - advanceDate(date : LocalDate) : LocalDate
   + display() : String
+  + matches(field, val : String) : boolean
   + toRecord() : String
   ..Getters..
   + getRecurrencePattern() : String
   + getIntervalValue() : int
   + getIntervalUnit() : String
+  ..Setters..
+  + setRecurrencePattern(pattern : String) : void
+  + setIntervalValue(value : int) : void
+  + setIntervalUnit(unit : String) : void
 }
 
 Entry <|-- Event

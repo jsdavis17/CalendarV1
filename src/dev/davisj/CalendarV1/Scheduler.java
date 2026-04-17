@@ -105,6 +105,14 @@ public class Scheduler
 	private ArrayList<LocalTime[]> getOccupiedIntervals(LocalDate date, ArrayList<Task> newlyScheduled)
 	{
 		ArrayList<LocalTime[]> occupied = new ArrayList<>();
+		int minBreak = profile.getMinBreakMinutes();
+		LocalTime workEnd = profile.getWorkEnd();
+
+		// Block the configured no-work period on every day
+		LocalTime noWorkStart = profile.getNoWorkStart();
+		LocalTime noWorkEnd = profile.getNoWorkEnd();
+		if (noWorkStart != null && noWorkEnd != null && noWorkEnd.isAfter(noWorkStart))
+			occupied.add(new LocalTime[] {noWorkStart, noWorkEnd});
 
 		for (Entry e : profile.getEntries())
 		{
@@ -129,7 +137,10 @@ public class Scheduler
 				if (t.isScheduled() && t.getScheduledDate().equals(date))
 				{
 					LocalTime tEnd = t.getScheduledStart().plusMinutes(t.getDuration());
-					occupied.add(new LocalTime[] {t.getScheduledStart(), tEnd});
+					LocalTime paddedEnd = minBreak > 0 ? tEnd.plusMinutes(minBreak) : tEnd;
+					if (paddedEnd.isAfter(workEnd))
+						paddedEnd = workEnd;
+					occupied.add(new LocalTime[] {t.getScheduledStart(), paddedEnd});
 				}
 			}
 		}
@@ -139,7 +150,10 @@ public class Scheduler
 			if (t.getScheduledDate().equals(date))
 			{
 				LocalTime tEnd = t.getScheduledStart().plusMinutes(t.getDuration());
-				occupied.add(new LocalTime[] {t.getScheduledStart(), tEnd});
+				LocalTime paddedEnd = minBreak > 0 ? tEnd.plusMinutes(minBreak) : tEnd;
+				if (paddedEnd.isAfter(workEnd))
+					paddedEnd = workEnd;
+				occupied.add(new LocalTime[] {t.getScheduledStart(), paddedEnd});
 			}
 		}
 

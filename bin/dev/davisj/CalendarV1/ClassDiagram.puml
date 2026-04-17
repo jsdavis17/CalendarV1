@@ -9,34 +9,45 @@ skinparam arrowColor #000000
 skinparam arrowThickness 1.2
 skinparam packageBorderColor #555555
 skinparam packageBackgroundColor #F7F9FC
-skinparam class {
-  BackgroundColor<<stub>> #EFEFEF
-  BorderColor<<stub>> #AAAAAA
-  HeaderBackgroundColor<<stub>> #CCCCCC
-}
 
 class Profile {
   - profileName : String
   - entries : ArrayList<Entry>
   - focusDate : LocalDate
   - viewMode : String
+  - workStart : LocalTime
+  - workEnd : LocalTime
+  - noWorkStart : LocalTime
+  - noWorkEnd : LocalTime
+  - minBreakMinutes : int
   --
   <<constructor>> Profile(name : String)
   + addEntry(entry : Entry) : void
   + removeEntry(entry : Entry) : void
   + getEntriesInRange(start, end : LocalDate) : ArrayList<Entry>
+  + searchEntries(field, val : String) : ArrayList<Entry>
   + getSettings() : String[]
   + setSettings(settings : String[]) : void
   + getProfileName() : String
   + getEntries() : ArrayList<Entry>
   + getFocusDate() : LocalDate
   + getViewMode() : String
+  + getWorkStart() : LocalTime
+  + getWorkEnd() : LocalTime
+  + getNoWorkStart() : LocalTime
+  + getNoWorkEnd() : LocalTime
+  + getMinBreakMinutes() : int
   + setFocusDate(date : LocalDate) : void
   + setViewMode(mode : String) : void
+  + setWorkStart(workStart : LocalTime) : void
+  + setWorkEnd(workEnd : LocalTime) : void
+  + setNoWorkStart(t : LocalTime) : void
+  + setNoWorkEnd(t : LocalTime) : void
+  + setMinBreakMinutes(m : int) : void
 }
 
 class ProfileManager {
-  - {static} INDEX_FILE : String
+  - INDEX_FILE : String
   - profileDirectory : String
   --
   <<constructor>> ProfileManager()
@@ -45,19 +56,26 @@ class ProfileManager {
   + createProfile(name : String) : Profile
   + saveProfile(profile : Profile) : void
   + loadProfile(name : String) : Profile
+  - parseFields(parts : String[], start : int) : Map<String,String>
+  - parseEntry(type : String, parts : String[]) : Entry
 }
 
 class CalendarView {
   - profile : Profile
   --
   <<constructor>> CalendarView(profile : Profile)
-  + display() : void
-  + displayDay(date : LocalDate) : void
-  + displayThreeDay(date : LocalDate) : void
-  + displayWeek(date : LocalDate) : void
-  + displayMonth(date : LocalDate) : void
+  + display() : String
+  + buildDay(date : LocalDate) : String
+  + buildThreeDay(date : LocalDate) : String
+  + buildWeek(date : LocalDate) : String
+  + buildMonth(date : LocalDate) : String
   + formatEntry(entry : Entry) : String
-  + showConflictMarker(events : ArrayList<Event>) : void
+  + showConflictMarker(events : ArrayList<Event>) : String
+  - buildEntriesForDate(date : LocalDate, compact : boolean) : String
+  - buildMonthGrid(first, last : LocalDate) : String
+  - buildTimedEventsCompact(timedEvents : ArrayList<Event>) : String
+  - buildTimedEventsFull(timedEvents : ArrayList<Event>) : String
+  - formatBlock(content : String) : String
 }
 
 class ChronoPlan {
@@ -65,12 +83,62 @@ class ChronoPlan {
   - profileManager : ProfileManager
   - view : CalendarView
   - scheduler : Scheduler
+  - scanner : Scanner
   --
   + {static} main(args : String[]) : void
   <<constructor>> ChronoPlan()
   + run() : void
   + handleMenu() : void
   + handleEntryCreation() : void
+  - loadOrCreateProfile() : void
+  - handleNewProfileSetup() : void
+  - handleChangeFocusDate() : void
+  - handleChangeView() : void
+  - handleAutoSchedule() : void
+  - handleSearch() : void
+  - handleExport() : void
+  - handleSettings() : void
+  - handleViewEdit(entry : Entry) : void
+  - deleteEntry(entry : Entry) : void
+  - autosave() : void
+  - createEvent() : void
+  - createTask() : void
+  - createFlag() : void
+  - createRecurringEvent() : void
+  - editEntry(entry : Entry) : void
+  - editEvent(ev : Event) : void
+  - editRecurringEvent(re : RecurringEvent) : void
+  - editTask(t : Task) : void
+  - editFlag(f : Flag) : void
+  - applyEventEdits(ev : Event, title, desc : String,\n  date : LocalDate, newStart, newEnd : LocalTime,\n  busyIn : String) : void
+  - applyRecurringEdits(re : RecurringEvent, title, desc : String,\n  date : LocalDate, newStart, newEnd : LocalTime,\n  busyIn, pattern : String, value : Integer,\n  unit : String) : void
+  - confirmConflicts(event : Event) : boolean
+  - promptStartEnd() : LocalTime[]
+  - promptRecurrence() : String[]
+  - promptSortPolicy() : SchedulingPolicy
+  - promptPlacementPolicy() : PlacementPolicy
+  - promptNoWorkPeriod() : void
+  - updateWorkHours() : void
+  - updateSchedulingConstraints() : void
+  - promptNoWorkConstraintsUpdate() : void
+  - buildExporter(choice : int) : Exporter
+  - buildExportRange(rangeChoice : int) : LocalDate[]
+  - promptExportFilename(choice : int) : String
+  - promptSearchCriteria() : String[]
+  - selectFromResults(results : ArrayList<Entry>) : Entry
+  - printScheduleResult(result : SchedulingResult) : void
+  - printNoWorkSummary() : void
+  - printMainMenu() : void
+  - tryString(prompt : String) : String
+  - tryDate(prompt : String) : LocalDate
+  - tryTime(prompt : String) : LocalTime
+  - tryInt(prompt : String) : Integer
+  - tryValidatedPattern(current : String) : String
+  - isValidPattern(p : String) : boolean
+  - getPriorityInput(prompt : String) : int
+  - getPositiveIntInput(prompt : String) : int
+  - getBinaryInput(header, prompt : String) : int
+  - getValidatedUnit(prompt : String) : String
   + getIntInput(prompt : String) : int
   + getStringInput(prompt : String) : String
   + getDateInput(prompt : String) : LocalDate
@@ -81,12 +149,12 @@ package "Entry Hierarchy" {
   abstract class Entry {}
 }
 
-package "Scheduler Hierarchy  [stub]" {
+package "Scheduler Hierarchy" {
   class Scheduler {}
 }
 
-package "Exporter Hierarchy  [stub]" {
-  abstract class Exporter <<stub>> {}
+package "Exporter Hierarchy" {
+  abstract class Exporter {}
 }
 
 Profile        "1" o-- "0..*" Entry        : contains >

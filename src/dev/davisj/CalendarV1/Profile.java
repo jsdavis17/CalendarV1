@@ -12,6 +12,9 @@ public class Profile
 	private String viewMode;
 	private LocalTime workStart;
 	private LocalTime workEnd;
+	private LocalTime noWorkStart;
+	private LocalTime noWorkEnd;
+	private int minBreakMinutes;
 
 	public Profile(String name)
 	{
@@ -21,6 +24,9 @@ public class Profile
 		this.viewMode = "week";
 		this.workStart = LocalTime.of(8, 0);
 		this.workEnd = LocalTime.of(20, 0);
+		this.noWorkStart = null;
+		this.noWorkEnd = null;
+		this.minBreakMinutes = 0;
 	}
 
 	public void addEntry(Entry entry)
@@ -74,9 +80,13 @@ public class Profile
 		return results;
 	}
 
+	// Settings serialization — order: viewMode, focusDate, workStart, workEnd,
+	// noWorkStart, noWorkEnd, minBreak
 	public String[] getSettings()
 	{
-		return new String[] {viewMode, focusDate.toString(), workStart.toString(), workEnd.toString()};
+		return new String[] {viewMode, focusDate.toString(), workStart.toString(), workEnd.toString(),
+				noWorkStart != null ? noWorkStart.toString() : "", noWorkEnd != null ? noWorkEnd.toString() : "",
+				String.valueOf(minBreakMinutes)};
 	}
 
 	public void setSettings(String[] settings)
@@ -90,6 +100,21 @@ public class Profile
 		{
 			workStart = LocalTime.parse(settings[2]);
 			workEnd = LocalTime.parse(settings[3]);
+		}
+		if (settings.length >= 6)
+		{
+			noWorkStart = settings[4].isEmpty() ? null : LocalTime.parse(settings[4]);
+			noWorkEnd = settings[5].isEmpty() ? null : LocalTime.parse(settings[5]);
+		}
+		if (settings.length >= 7)
+		{
+			try
+			{
+				minBreakMinutes = Integer.parseInt(settings[6]);
+			}
+			catch (NumberFormatException ignored)
+			{
+			}
 		}
 	}
 
@@ -114,6 +139,31 @@ public class Profile
 		return viewMode;
 	}
 
+	public LocalTime getWorkStart()
+	{
+		return workStart;
+	}
+
+	public LocalTime getWorkEnd()
+	{
+		return workEnd;
+	}
+
+	public LocalTime getNoWorkStart()
+	{
+		return noWorkStart;
+	}
+
+	public LocalTime getNoWorkEnd()
+	{
+		return noWorkEnd;
+	}
+
+	public int getMinBreakMinutes()
+	{
+		return minBreakMinutes;
+	}
+
 	// Setters
 	public void setFocusDate(LocalDate date)
 	{
@@ -125,16 +175,6 @@ public class Profile
 		this.viewMode = mode;
 	}
 
-	public LocalTime getWorkStart()
-	{
-		return workStart;
-	}
-
-	public LocalTime getWorkEnd()
-	{
-		return workEnd;
-	}
-
 	public void setWorkStart(LocalTime workStart)
 	{
 		this.workStart = workStart;
@@ -143,5 +183,20 @@ public class Profile
 	public void setWorkEnd(LocalTime workEnd)
 	{
 		this.workEnd = workEnd;
+	}
+
+	public void setNoWorkStart(LocalTime noWorkStart)
+	{
+		this.noWorkStart = noWorkStart;
+	}
+
+	public void setNoWorkEnd(LocalTime noWorkEnd)
+	{
+		this.noWorkEnd = noWorkEnd;
+	}
+
+	public void setMinBreakMinutes(int minutes)
+	{
+		this.minBreakMinutes = minutes;
 	}
 }

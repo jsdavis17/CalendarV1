@@ -15,7 +15,7 @@ import java.util.UUID;
 
 public class ProfileManager
 {
-	private static final String INDEX_FILE = "profiles/index.txt";
+	private final String INDEX_FILE = "profiles/index.txt";
 	private String profileDirectory;
 
 	public ProfileManager()
@@ -38,7 +38,8 @@ public class ProfileManager
 				if (!name.isEmpty())
 					names.add(name);
 			}
-		} catch (Exception e)
+		}
+		catch (Exception e)
 		{
 			System.out.println("Error reading profile index: " + e.getMessage());
 		}
@@ -57,7 +58,8 @@ public class ProfileManager
 			try (PrintWriter pw = new PrintWriter(new FileWriter(INDEX_FILE, true)))
 			{
 				pw.println(name);
-			} catch (Exception e)
+			}
+			catch (Exception e)
 			{
 				System.out.println("Error updating profile index: " + e.getMessage());
 			}
@@ -73,11 +75,12 @@ public class ProfileManager
 		try (PrintWriter pw = new PrintWriter(filePath))
 		{
 			String[] s = profile.getSettings();
-			pw.println("SETTINGS|viewMode=" + s[0] + "|focusDate=" + s[1]
-					+ "|workStart=" + s[2] + "|workEnd=" + s[3]);
+			pw.println("SETTINGS|viewMode=" + s[0] + "|focusDate=" + s[1] + "|workStart=" + s[2] + "|workEnd=" + s[3]
+					+ "|noWorkStart=" + s[4] + "|noWorkEnd=" + s[5] + "|minBreak=" + s[6]);
 			for (Entry e : profile.getEntries())
 				pw.println(e.toRecord());
-		} catch (Exception e)
+		}
+		catch (Exception e)
 		{
 			System.out.println("Error saving profile: " + e.getMessage());
 		}
@@ -105,19 +108,21 @@ public class ProfileManager
 				if (type.equals("SETTINGS"))
 				{
 					Map<String, String> m = parseFields(parts, 1);
-					profile.setSettings(new String[]
-					{ m.getOrDefault("viewMode", "week"),
-					  m.getOrDefault("focusDate", LocalDate.now().toString()),
-					  m.getOrDefault("workStart", "08:00"),
-					  m.getOrDefault("workEnd", "20:00") });
-				} else
+					profile.setSettings(new String[] {m.getOrDefault("viewMode", "week"),
+							m.getOrDefault("focusDate", LocalDate.now().toString()),
+							m.getOrDefault("workStart", "08:00"), m.getOrDefault("workEnd", "20:00"),
+							m.getOrDefault("noWorkStart", ""), m.getOrDefault("noWorkEnd", ""),
+							m.getOrDefault("minBreak", "0")});
+				}
+				else
 				{
 					Entry entry = parseEntry(type, parts);
 					if (entry != null)
 						profile.addEntry(entry);
 				}
 			}
-		} catch (Exception e)
+		}
+		catch (Exception e)
 		{
 			System.out.println("Error loading profile: " + e.getMessage());
 		}
@@ -186,7 +191,8 @@ public class ProfileManager
 				System.out.println("Unknown entry type: " + type);
 				return null;
 			}
-		} catch (Exception e)
+		}
+		catch (Exception e)
 		{
 			System.out.println("Error parsing entry (" + type + "): " + e.getMessage());
 			return null;

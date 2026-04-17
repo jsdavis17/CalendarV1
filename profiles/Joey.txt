@@ -1,4 +1,4 @@
-SETTINGS|viewMode=week|focusDate=2026-04-05|workStart=06:30|workEnd=23:59
+SETTINGS|viewMode=3day|focusDate=2026-04-16|workStart=06:30|workEnd=23:59|noWorkStart=|noWorkEnd=|minBreak=0
 RECURRING|id=625f41c3-ca23-46a4-b523-5ac34c403f5b|title=HF+310|description=COAS+203|date=2026-03-30|start=08:00|end=08:50|busy=true|pattern=WEEKLY|value=1|unit=WEEKS
 RECURRING|id=01f1adfd-9630-47cb-ad32-43c9eddb3508|title=HF+310|description=COAS+203|date=2026-04-01|start=08:00|end=08:50|busy=true|pattern=WEEKLY|value=1|unit=WEEKS
 RECURRING|id=92af9a15-430f-43d2-8c58-328e36902fe1|title=HF+310|description=COAS+203|date=2026-04-03|start=08:00|end=08:50|busy=true|pattern=WEEKLY|value=1|unit=WEEKS
